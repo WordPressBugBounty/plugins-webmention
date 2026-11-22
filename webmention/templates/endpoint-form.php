@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html <?php language_attributes(); ?>>
+<head>
+	<meta charset="<?php bloginfo( 'charset' ); ?>" />
+	<meta name="viewport" content="width=device-width">
+	<?php
+	add_filter( 'wp_robots', 'wp_robots_no_robots' );
+	wp_robots();
+	?>
+	<title><?php esc_html_e( 'Webmention Endpoint', 'webmention' ); ?></title>
+	<style type="text/css">
+		html {
+			background: #f1f1f1;
+		}
+		body {
+			background: #fff;
+			color: #444;
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			margin: 2em auto;
+			padding: 1em 2em;
+			max-width: 700px;
+			-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.13);
+			box-shadow: 0 1px 3px rgba(0,0,0,0.13);
+		}
+		h1 {
+			border-bottom: 1px solid #dadada;
+			clear: both;
+			color: #666;
+			font-size: 24px;
+			margin: 30px 0 0 0;
+			padding: 0;
+			padding-bottom: 7px;
+		}
+		#webmention-endpint-page {
+			margin-top: 50px;
+		}
+		#webmention-endpint-page p {
+			font-size: 14px;
+			line-height: 1.5;
+			margin: 25px 0 20px;
+		}
+		#webmention-endpint-page code {
+			font-family: Consolas, Monaco, monospace;
+		}
+		ul li {
+			margin-bottom: 10px;
+			font-size: 14px ;
+		}
+		a {
+			color: #0073aa;
+		}
+		a:hover,
+		a:active {
+			color: #00a0d2;
+		}
+		a:focus {
+			color: #124964;
+			-webkit-box-shadow:
+				0 0 0 1px #5b9dd9,
+				0 0 2px 1px rgba(30, 140, 190, .8);
+			box-shadow:
+				0 0 0 1px #5b9dd9,
+				0 0 2px 1px rgba(30, 140, 190, .8);
+			outline: none;
+		}
+		.button {
+			background: #f7f7f7;
+			border: 1px solid #ccc;
+			color: #555;
+			display: inline-block;
+			text-decoration: none;
+			font-size: 13px;
+			line-height: 26px;
+			height: 28px;
+			margin: 0;
+			padding: 0 10px 1px;
+			cursor: pointer;
+			-webkit-border-radius: 3px;
+			-webkit-appearance: none;
+			border-radius: 3px;
+			white-space: nowrap;
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing:    border-box;
+			box-sizing:         border-box;
+			-webkit-box-shadow: 0 1px 0 #ccc;
+			box-shadow: 0 1px 0 #ccc;
+			vertical-align: top;
+		}
+		.button.button-large {
+			height: 30px;
+			line-height: 28px;
+			padding: 0 12px 2px;
+		}
+		.button:hover,
+		.button:focus {
+			background: #fafafa;
+			border-color: #999;
+			color: #23282d;
+		}
+		.button:focus  {
+			border-color: #5b9dd9;
+			-webkit-box-shadow: 0 0 3px rgba( 0, 115, 170, .8 );
+			box-shadow: 0 0 3px rgba( 0, 115, 170, .8 );
+			outline: none;
+		}
+		.button:active {
+			background: #eee;
+			border-color: #999;
+			-webkit-box-shadow: inset 0 2px 5px -3px rgba( 0, 0, 0, 0.5 );
+			box-shadow: inset 0 2px 5px -3px rgba( 0, 0, 0, 0.5 );
+			-webkit-transform: translateY(1px);
+			-ms-transform: translateY(1px);
+			transform: translateY(1px);
+		}
+	</style>
+	</head>
+	<body id="webmention-endpint-page">
+		<h1><?php esc_html_e( 'Send a Webmention', 'webmention' ); ?></h1>
+		<p>
+			<?php echo wp_kses_post( __( 'Write a response on your own website and include a link to the post you’re responding to. Then submit your response’s URL here. Your response may appear after moderation. To update or remove it, edit or delete your original post and submit the same URL again. <a href="https://indieweb.org/Webmention">Learn more about Webmentions.</a>', 'webmention' ) ); ?>
+		</p>
+
+		<?php do_action( 'webmention_endpoint_form_before_form' ); ?>
+
+		<form id="webmention-form" action="<?php echo esc_url( get_webmention_endpoint() ); ?>" method="post">
+			<?php do_action( 'webmention_endpoint_form_before_input_fields' ); ?>
+			<p>
+				<label for="webmention-source"><?php esc_html_e( 'Your post’s URL', 'webmention' ); ?>:</label><br />
+				<input id="webmention-source" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="source" placeholder="https://" aria-describedby="webmention-source-description" size="70" />
+				<br /><small id="webmention-source-description"><?php esc_html_e( 'Your post must include a link to the post you’re responding to.', 'webmention' ); ?></small>
+			</p>
+			<p>
+				<label for="webmention-target"><?php esc_html_e( 'URL of the post you’re responding to', 'webmention' ); ?>:</label><br />
+				<input id="webmention-target" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="target" placeholder="https://" size="70" />
+			</p>
+			<p>
+				<input id="webmention-submit" type="submit" name="submit" value="<?php echo esc_attr( apply_filters( 'webmention_form_submit_text', __( 'Send Webmention', 'webmention' ) ) ); ?>" />
+			</p>
+			<input id="webmention-format" type="hidden" name="format" value="html" />
+			<?php do_action( 'webmention_endpoint_form_after_input_fields' ); ?>
+		</form>
+
+		<p><?php esc_html_e( 'Webmention lets you notify a website when you publish a post that links to it.', 'webmention' ); ?> </p>
+		<p>
+			<?php
+			/* Translators: placeholder will be an html link to webmention.net */
+			printf( esc_html__( 'Learn more about Webmentions at %s', 'webmention' ), '<a href="https://webmention.net">webmention.net</a>' );
+			?>
+		</p>
+
+	</body>
+</html>
