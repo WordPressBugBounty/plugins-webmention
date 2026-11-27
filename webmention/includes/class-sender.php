@@ -142,7 +142,7 @@ class Sender {
 	public static function trash_post( $post_id ) {
 		add_post_meta(
 			$post_id,
-			'webmention_canonical_url',
+			'_webmention_canonical_url',
 			get_permalink( $post_id ),
 			true
 		);
@@ -156,7 +156,7 @@ class Sender {
 	 * @return void
 	 */
 	public static function untrash_post( $post_id ) {
-		delete_post_meta( $post_id, 'webmention_canonical_url' );
+		delete_post_meta( $post_id, '_webmention_canonical_url' );
 	}
 
 	/**
@@ -237,7 +237,7 @@ class Sender {
 			return;
 		}
 
-		$source = get_post_meta( $post_id, 'webmention_canonical_url', true );
+		$source = get_post_meta( $post_id, '_webmention_canonical_url', true );
 
 		if ( ! $source ) {
 			$source = get_permalink( $post_id );
@@ -253,8 +253,11 @@ class Sender {
 
 		$support_media_urls = ( 0 === get_option( 'webmention_send_media_mentions' ) );
 
+		// render blocks (not available on ClassicPress) and shortcodes, so their links are included
+		$content = \site_supports_blocks() ? \do_blocks( $post->post_content ) : $post->post_content;
+
 		// initialize links array
-		$urls = webmention_extract_urls( $post->post_content, $support_media_urls );
+		$urls = webmention_extract_urls( \do_shortcode( $content ), $support_media_urls );
 
 		// filter links
 		$targets   = apply_filters( 'webmention_links', $urls, $post_id );
